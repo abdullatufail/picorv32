@@ -1,0 +1,22 @@
+=== Performance Metrics for test_mod ===
+# Cycles:5945
+# Cycles:31456
+# Cycles:277239
+Number of cycles taken 1132
+Number of cycles taken 1111
+Cycle counter ......... 372817
+TRAP after 414158 clock cycles
+# Instr:1411
+# Instr:6849
+# Instr:64608
+Number of instrucs taken 809
+Number of instrucs taken 811
+Instruction counter .... 84456
+EBREAK instruction at 0x0000049C
+CPI = 27
+CPI = 25
+CPI: 4.41
+Total time for both:
+Number of timer IRQs counted: 0
+ALL TESTS PASSED.
+

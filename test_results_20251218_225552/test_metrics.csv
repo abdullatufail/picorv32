@@ -1,0 +1,8 @@
+Test,Cycles,Instructions,CPI,Status
+test_axi,N/A,N/A,N/A,PASSED
+test_ez,N/A,N/A,N/A,PASSED
+test,N/A,N/A,N/A,PASSED
+test_mod,372817,84456,4.41,PASSED
+test_sp,N/A,N/A,N/A,PASSED
+test_tb,N/A,N/A,N/A,PASSED
+test_wb,N/A,N/A,N/A,FAILED

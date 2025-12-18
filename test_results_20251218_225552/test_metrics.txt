@@ -1,0 +1,8 @@
+=== Performance Metrics for test ===
+# Cycles:5945
+# Cycles:31456
+# Cycles:277239
+# Instr:1411
+# Instr:6849
+# Instr:64608
+

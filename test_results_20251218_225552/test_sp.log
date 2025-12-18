@@ -1,0 +1,28 @@
+iverilog -o testbench_sp.vvp -DCOMPRESSED_ISA -DSP_TEST testbench.v picorv32.v
+chmod -x testbench_sp.vvp
+vvp -N testbench_sp.vvp
+Now in software...
+Expanding key...
+# Instr:1537
+# Cycles:7177
+Encrypting...
+# Instr:6849
+# Cycles:34162
+Result:
+39 02 DC 19 
+25 DC 11 6A 
+84 09 85 0B 
+1D FB 97 32 
+
+Decrypting...
+# Instr:64982
+# Cycles:303917
+Result:
+32 88 31 E0 
+43 5A 31 37 
+F6 30 98 07 
+A8 8D A2 34 
+
+Now in hardware...
+OUT-OF-BOUNDS MEMORY WRITE TO 2500004c
+testbench.v:423: $finish called at 3881595000 (1ps)

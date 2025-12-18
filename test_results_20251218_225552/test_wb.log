@@ -1,0 +1,30 @@
+iverilog -o testbench_wb.vvp -DCOMPRESSED_ISA testbench_wb.v picorv32.v
+chmod -x testbench_wb.vvp
+vvp -N testbench_wb.vvp
+Now in software...
+Expanding key...
+# Instr:1537
+# Cycles:12787
+Encrypting...
+# Instr:7231
+# Cycles:59374
+Result:
+39 02 DC 19 
+25 DC 11 6A 
+84 09 85 0B 
+1D FB 97 32 
+
+Decrypting...
+# Instr:67896
+# Cycles:496079
+Result:
+32 88 31 E0 
+43 5A 31 37 
+F6 30 98 07 
+A8 8D A2 34 
+
+Now in hardware...
+TRAP after 639022 clock cycles
+ERROR!
+testbench_wb.v:164: $stop called at 6391320000 (1ps)
+make: *** [Makefile:43: test_wb] Error 1

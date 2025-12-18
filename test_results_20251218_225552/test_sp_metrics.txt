@@ -1,0 +1,8 @@
+=== Performance Metrics for test_sp ===
+# Cycles:7177
+# Cycles:34162
+# Cycles:303917
+# Instr:1537
+# Instr:6849
+# Instr:64982
+

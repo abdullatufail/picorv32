@@ -1,0 +1,11 @@
+=== Performance Metrics for test_wb ===
+# Cycles:12787
+# Cycles:59374
+# Cycles:496079
+TRAP after 639022 clock cycles
+# Instr:1537
+# Instr:7231
+# Instr:67896
+ERROR!
+make: *** [Makefile:43: test_wb] Error 1
+

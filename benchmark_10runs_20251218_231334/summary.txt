@@ -1,0 +1,11 @@
+Benchmark Summary
+=================
+Runs: 10
+Passed: 10 (100%)
+Failed: 0
+
+Output Files:
+  Raw Data:    benchmark_10runs_20251218_231334/raw_data.csv
+  Statistics:  benchmark_10runs_20251218_231334/statistics.txt
+  Plot Data:   benchmark_10runs_20251218_231334/plot_data.csv
+  Individual:  benchmark_10runs_20251218_231334/run_*.log

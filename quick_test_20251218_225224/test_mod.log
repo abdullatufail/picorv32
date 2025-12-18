@@ -1,0 +1,39 @@
+iverilog -o testbench_mod.vvp -DCOMPRESSED_ISA testbench_mod.v axi4_mem_periph.v picorv32.v AES/Top_module/AES.v AES/Encryption/AddRoundKey.v AES/Encryption/AES_encrypt.v AES/Encryption/MixColumns.v AES/Encryption/ShiftRows.v AES/Encryption/SubBytes.v AES/Decryption/AES_decrypt.v AES/Decryption/InvMixCols.v AES/Decryption/InvShiftrows.v AES/Decryption/InvSubBytes.v AES/Key_expansion_and_memory/Key_Expansion_Outer.v AES/Key_expansion_and_memory/AESKeyexpansion_128.v AES/Key_expansion_and_memory/AESKeyexpansion_192.v AES/Key_expansion_and_memory/AESKeyexpansion_256.v AES/Key_expansion_and_memory/current_word_gen_128.v AES/Key_expansion_and_memory/current_word_gen_192.v AES/Key_expansion_and_memory/current_word_gen_256.v AES/Key_expansion_and_memory/Key_mem.v
+chmod -x testbench_mod.vvp
+vvp -N testbench_mod.vvp
+Now in software...
+Expanding key...
+# Instr:1411
+# Cycles:5945
+Encrypting...
+# Instr:6849
+# Cycles:31456
+Result:
+39 02 DC 19 
+25 DC 11 6A 
+84 09 85 0B 
+1D FB 97 32 
+
+Decrypting...
+# Instr:64608
+# Cycles:277239
+Result:
+32 88 31 E0 
+43 5A 31 37 
+F6 30 98 07 
+A8 8D A2 34 
+
+Now in hardware...
+Number of cycles taken 1132
+Number of instrucs taken 809
+CPI = 27
+Ciphertext: 3925841D02DC09FBDC118597196A0B32
+Number of cycles taken 1111
+Number of instrucs taken 811
+CPI = 25
+Plaintext: 3243F6A8885A308D313198A2E0370734
+------------------------
+Total time for both:
+Cycle counter ......... 372817
+Instruction counter .... 84456
+CPI: 4.41

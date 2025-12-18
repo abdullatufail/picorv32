@@ -1,0 +1,21 @@
+=====================================
+PicoRV32 Test Suite Execution Report
+Date: Thu Dec 18 10:55:52 PM PKT 2025
+=====================================
+
+[PASS] test_mod (12s)
+[PASS] test_tb (0s)
+[PASS] test (9s)
+[FAIL] test_wb (13s)
+[PASS] test_ez (0s)
+[PASS] test_sp (10s)
+[PASS] test_axi (12s)
+
+=====================================
+Test Summary
+=====================================
+Total Tests: 7
+Passed: 6
+Failed: 1
+Success Rate: 85%
+=====================================

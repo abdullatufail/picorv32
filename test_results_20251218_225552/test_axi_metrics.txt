@@ -1,0 +1,8 @@
+=== Performance Metrics for test_axi ===
+# Cycles:9179
+# Cycles:42842
+# Cycles:364211
+# Instr:1537
+# Instr:6979
+# Instr:65868
+

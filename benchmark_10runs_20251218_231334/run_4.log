@@ -1,0 +1,56 @@
+vvp -N testbench_mod.vvp
+Now in software...
+Expanding key...
+# Instr:1411
+# Cycles:5945
+Encrypting...
+# Instr:6849
+# Cycles:31456
+Result:
+39 02 DC 19 
+25 DC 11 6A 
+84 09 85 0B 
+1D FB 97 32 
+
+Decrypting...
+# Instr:64608
+# Cycles:277239
+Result:
+32 88 31 E0 
+43 5A 31 37 
+F6 30 98 07 
+A8 8D A2 34 
+
+Now in hardware...
+Number of cycles taken 1132
+Number of instrucs taken 809
+CPI = 27
+Ciphertext: 3925841D02DC09FBDC118597196A0B32
+Number of cycles taken 1111
+Number of instrucs taken 811
+CPI = 25
+Plaintext: 3243F6A8885A308D313198A2E0370734
+------------------------
+Total time for both:
+Cycle counter ......... 372817
+Instruction counter .... 84456
+CPI: 4.41
+DONE
+
+------------------------------------------------------------
+EBREAK instruction at 0x0000049C
+pc  0000049F    x8  00000000    x16 00000000    x24 00000000
+x1  0000046C    x9  00000000    x17 00000000    x25 00000000
+x2  00020000    x10 20000000    x18 00000000    x26 00000000
+x3  DEADBEEF    x11 075BCD15    x19 00000000    x27 00000000
+x4  DEADBEEF    x12 0000004F    x20 00000000    x28 00000000
+x5  000017B4    x13 0000004E    x21 00000000    x29 00000000
+x6  00000000    x14 00000045    x22 00000000    x30 00000000
+x7  00000000    x15 0000000A    x23 00000000    x31 00000000
+------------------------------------------------------------
+Number of fast external IRQs counted: 47
+Number of slow external IRQs counted: 5
+Number of timer IRQs counted: 0
+TRAP after 414158 clock cycles
+ALL TESTS PASSED.
+testbench_mod.v:197: $finish called at 4142680000 (1ps)
