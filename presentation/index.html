@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AES Hardware Accelerator | PicoRV32 Integration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-brand">AES × PicoRV32</div>
+        <div class="nav-links">
+            <a href="#hero">Home</a>
+            <a href="#problem">Problem</a>
+            <a href="#solution">Solution</a>
+            <a href="#architecture">Architecture</a>
+            <a href="#results">Results</a>
+            <a href="#comparison">Comparison</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="hero-bg">
+            <div class="grid-pattern"></div>
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-badge">EE2003 Final Project</div>
+            <h1>AES Hardware<br><span class="gradient-text">Accelerator</span></h1>
+            <p class="hero-subtitle">Integrated with PicoRV32 RISC-V Processor via AXI4-Lite</p>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <span class="stat-number">27.78×</span>
+                    <span class="stat-label">Encryption Speedup</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">249.54×</span>
+                    <span class="stat-label">Decryption Speedup</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Test Pass Rate</span>
+                </div>
+            </div>
+            <a href="#problem" class="scroll-indicator">
+                <span>Scroll to explore</span>
+                <div class="scroll-arrow"></div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section id="problem" class="section section-dark">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">01</span>
+                <h2>The Problem</h2>
+            </div>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <div class="problem-icon">⏱️</div>
+                    <h3>Software AES is Slow</h3>
+                    <p>Pure software implementation of AES encryption requires <strong>31,456 CPU cycles</strong> per block—a significant computational overhead for embedded systems.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">🔐</div>
+                    <h3>Decryption is Worse</h3>
+                    <p>AES decryption in software takes a staggering <strong>277,239 cycles</strong>—nearly 9× slower than encryption due to complex inverse operations.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">⚡</div>
+                    <h3>Resource Constraints</h3>
+                    <p>Embedded RISC-V systems need cryptographic operations but cannot afford the CPU time overhead of software implementations.</p>
+                </div>
+            </div>
+            <div class="cycles-visualization">
+                <h3>Software Cycle Counts</h3>
+                <div class="bar-chart">
+                    <div class="bar-item">
+                        <div class="bar-label">Encryption</div>
+                        <div class="bar-container">
+                            <div class="bar bar-encrypt-sw" data-value="31456"></div>
+                        </div>
+                        <div class="bar-value">31,456 cycles</div>
+                    </div>
+                    <div class="bar-item">
+                        <div class="bar-label">Decryption</div>
+                        <div class="bar-container">
+                            <div class="bar bar-decrypt-sw" data-value="277239"></div>
+                        </div>
+                        <div class="bar-value">277,239 cycles</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section id="solution" class="section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">02</span>
+                <h2>Our Solution</h2>
+            </div>
+            <div class="solution-content">
+                <div class="solution-text">
+                    <h3>Hardware AES Accelerator</h3>
+                    <p>We designed a dedicated hardware accelerator for AES encryption and decryption, integrated as a memory-mapped peripheral with the PicoRV32 processor.</p>
+                    <ul class="feature-list">
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span>Supports <strong>AES-128, AES-192, and AES-256</strong></span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Parallel encryption & decryption</strong> pipelines</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span>Connected via <strong>AXI4-Lite</strong> interface</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Memory-mapped</strong> registers at 0x25000000</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span>Hardware <strong>key expansion</strong> unit</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="solution-visual">
+                    <div class="code-window">
+                        <div class="code-header">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                            <span class="filename">axi4_mem_periph.v</span>
+                        </div>
+                        <pre><code><span class="keyword">parameter</span> BASE_Addr = <span class="number">32'h2500_0000</span>;
+
+<span class="module">AES</span> A (
+    .<span class="port">clk</span>(clk), 
+    .<span class="port">reset</span>(reset),
+    .<span class="port">pt_valid</span>(pt_valid),
+    .<span class="port">pt_encr</span>(pt_encr),
+    .<span class="port">ct_rdy</span>(ct_rdy),
+    .<span class="port">ct_encr</span>(ct_encr),
+    .<span class="port">key_len</span>(key_len),
+    .<span class="port">short_key</span>(short_key),
+    .<span class="port">error</span>(error)
+);</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture" class="section section-dark">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">03</span>
+                <h2>System Architecture</h2>
+            </div>
+            <div class="architecture-diagram">
+                <div class="arch-component cpu">
+                    <div class="component-icon">🔲</div>
+                    <h4>PicoRV32</h4>
+                    <p>RISC-V RV32IMC</p>
+                    <ul class="specs">
+                        <li>750-2000 LUTs</li>
+                        <li>250-450 MHz</li>
+                        <li>~4 CPI</li>
+                    </ul>
+                </div>
+                <div class="arch-connection">
+                    <div class="connection-line"></div>
+                    <div class="connection-label">AXI4-Lite</div>
+                    <div class="connection-line"></div>
+                </div>
+                <div class="arch-component memory">
+                    <div class="component-icon">💾</div>
+                    <h4>Memory Peripheral</h4>
+                    <p>128KB RAM</p>
+                    <ul class="specs">
+                        <li>Memory Mapped I/O</li>
+                        <li>Base: 0x25000000</li>
+                    </ul>
+                </div>
+                <div class="arch-connection">
+                    <div class="connection-line"></div>
+                    <div class="connection-label">Internal Bus</div>
+                    <div class="connection-line"></div>
+                </div>
+                <div class="arch-component aes">
+                    <div class="component-icon">🔐</div>
+                    <h4>AES Accelerator</h4>
+                    <p>Hardware Crypto</p>
+                    <ul class="specs">
+                        <li>128/192/256-bit</li>
+                        <li>~11-15 rounds</li>
+                        <li>Key Expansion</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="aes-modules">
+                <h3>AES Module Hierarchy</h3>
+                <div class="module-grid">
+                    <div class="module-category">
+                        <h4>🔓 Encryption</h4>
+                        <div class="module-list">
+                            <span class="module-item">AddRoundKey</span>
+                            <span class="module-item">SubBytes</span>
+                            <span class="module-item">ShiftRows</span>
+                            <span class="module-item">MixColumns</span>
+                        </div>
+                    </div>
+                    <div class="module-category">
+                        <h4>🔒 Decryption</h4>
+                        <div class="module-list">
+                            <span class="module-item">AddRoundKey</span>
+                            <span class="module-item">InvSubBytes</span>
+                            <span class="module-item">InvShiftRows</span>
+                            <span class="module-item">InvMixCols</span>
+                        </div>
+                    </div>
+                    <div class="module-category">
+                        <h4>🔑 Key Management</h4>
+                        <div class="module-list">
+                            <span class="module-item">Key_Expansion_Outer</span>
+                            <span class="module-item">Key_mem</span>
+                            <span class="module-item">KeyExpansion_128</span>
+                            <span class="module-item">KeyExpansion_192</span>
+                            <span class="module-item">KeyExpansion_256</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">04</span>
+                <h2>Benchmark Results</h2>
+            </div>
+            <div class="results-overview">
+                <div class="result-metric">
+                    <div class="metric-value">
+                        <span class="big-number" data-target="1132">0</span>
+                        <span class="unit">cycles</span>
+                    </div>
+                    <div class="metric-label">Hardware Encryption</div>
+                    <div class="metric-compare">vs 31,456 in software</div>
+                </div>
+                <div class="result-metric highlight">
+                    <div class="metric-value">
+                        <span class="big-number" data-target="1111">0</span>
+                        <span class="unit">cycles</span>
+                    </div>
+                    <div class="metric-label">Hardware Decryption</div>
+                    <div class="metric-compare">vs 277,239 in software</div>
+                </div>
+                <div class="result-metric">
+                    <div class="metric-value">
+                        <span class="big-number decimal" data-target="4.41">0</span>
+                        <span class="unit">CPI</span>
+                    </div>
+                    <div class="metric-label">Cycles Per Instruction</div>
+                    <div class="metric-compare">84,456 total instructions</div>
+                </div>
+            </div>
+            
+            <div class="benchmark-details">
+                <h3>10-Run Benchmark Statistics</h3>
+                <div class="stats-table">
+                    <div class="stats-row header">
+                        <span>Metric</span>
+                        <span>Mean</span>
+                        <span>Min</span>
+                        <span>Max</span>
+                        <span>Std Dev</span>
+                    </div>
+                    <div class="stats-row">
+                        <span>SW Encrypt</span>
+                        <span>31,456</span>
+                        <span>31,456</span>
+                        <span>31,456</span>
+                        <span>0</span>
+                    </div>
+                    <div class="stats-row">
+                        <span>SW Decrypt</span>
+                        <span>277,239</span>
+                        <span>277,239</span>
+                        <span>277,239</span>
+                        <span>0</span>
+                    </div>
+                    <div class="stats-row highlight">
+                        <span>HW Encrypt</span>
+                        <span>1,132</span>
+                        <span>1,132</span>
+                        <span>1,132</span>
+                        <span>0</span>
+                    </div>
+                    <div class="stats-row highlight">
+                        <span>HW Decrypt</span>
+                        <span>1,111</span>
+                        <span>1,111</span>
+                        <span>1,111</span>
+                        <span>0</span>
+                    </div>
+                    <div class="stats-row">
+                        <span>Total Cycles</span>
+                        <span>372,817</span>
+                        <span>372,817</span>
+                        <span>372,817</span>
+                        <span>0</span>
+                    </div>
+                </div>
+                <p class="stats-note">✓ 100% pass rate across all 10 benchmark runs with deterministic results</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section id="comparison" class="section section-dark">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">05</span>
+                <h2>Performance Comparison</h2>
+            </div>
+            
+            <div class="speedup-cards">
+                <div class="speedup-card encryption">
+                    <div class="speedup-header">
+                        <span class="speedup-icon">⚡</span>
+                        <h3>Encryption</h3>
+                    </div>
+                    <div class="speedup-comparison">
+                        <div class="comparison-item sw">
+                            <span class="label">Software</span>
+                            <span class="cycles">31,456</span>
+                            <span class="sublabel">cycles</span>
+                        </div>
+                        <div class="comparison-arrow">→</div>
+                        <div class="comparison-item hw">
+                            <span class="label">Hardware</span>
+                            <span class="cycles">1,132</span>
+                            <span class="sublabel">cycles</span>
+                        </div>
+                    </div>
+                    <div class="speedup-result">
+                        <span class="speedup-value">27.78×</span>
+                        <span class="speedup-label">faster</span>
+                    </div>
+                    <div class="speedup-bar">
+                        <div class="speedup-bar-fill encrypt-fill"></div>
+                    </div>
+                </div>
+                
+                <div class="speedup-card decryption">
+                    <div class="speedup-header">
+                        <span class="speedup-icon">🚀</span>
+                        <h3>Decryption</h3>
+                    </div>
+                    <div class="speedup-comparison">
+                        <div class="comparison-item sw">
+                            <span class="label">Software</span>
+                            <span class="cycles">277,239</span>
+                            <span class="sublabel">cycles</span>
+                        </div>
+                        <div class="comparison-arrow">→</div>
+                        <div class="comparison-item hw">
+                            <span class="label">Hardware</span>
+                            <span class="cycles">1,111</span>
+                            <span class="sublabel">cycles</span>
+                        </div>
+                    </div>
+                    <div class="speedup-result">
+                        <span class="speedup-value">249.54×</span>
+                        <span class="speedup-label">faster</span>
+                    </div>
+                    <div class="speedup-bar">
+                        <div class="speedup-bar-fill decrypt-fill"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="visual-comparison">
+                <h3>Cycle Count Comparison</h3>
+                <div class="comparison-chart">
+                    <div class="chart-section">
+                        <h4>Encryption</h4>
+                        <div class="chart-bars">
+                            <div class="chart-bar-group">
+                                <div class="chart-bar sw-bar" style="--height: 100%">
+                                    <span class="bar-tooltip">31,456 cycles</span>
+                                </div>
+                                <span class="bar-label">Software</span>
+                            </div>
+                            <div class="chart-bar-group">
+                                <div class="chart-bar hw-bar" style="--height: 3.6%">
+                                    <span class="bar-tooltip">1,132 cycles</span>
+                                </div>
+                                <span class="bar-label">Hardware</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-section">
+                        <h4>Decryption</h4>
+                        <div class="chart-bars">
+                            <div class="chart-bar-group">
+                                <div class="chart-bar sw-bar" style="--height: 100%">
+                                    <span class="bar-tooltip">277,239 cycles</span>
+                                </div>
+                                <span class="bar-label">Software</span>
+                            </div>
+                            <div class="chart-bar-group">
+                                <div class="chart-bar hw-bar" style="--height: 0.4%">
+                                    <span class="bar-tooltip">1,111 cycles</span>
+                                </div>
+                                <span class="bar-label">Hardware</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conclusion Section -->
+    <section id="conclusion" class="section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">06</span>
+                <h2>Key Takeaways</h2>
+            </div>
+            <div class="takeaways">
+                <div class="takeaway-item">
+                    <div class="takeaway-number">1</div>
+                    <div class="takeaway-content">
+                        <h3>Massive Performance Gains</h3>
+                        <p>Hardware acceleration delivers up to <strong>250× improvement</strong> in decryption and <strong>28× in encryption</strong>, making real-time cryptographic operations feasible on embedded systems.</p>
+                    </div>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-number">2</div>
+                    <div class="takeaway-content">
+                        <h3>Seamless Integration</h3>
+                        <p>Memory-mapped design via <strong>AXI4-Lite</strong> allows software to access the accelerator through simple read/write operations—no special drivers needed.</p>
+                    </div>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-number">3</div>
+                    <div class="takeaway-content">
+                        <h3>Full AES Support</h3>
+                        <p>The accelerator supports all standard AES key lengths (<strong>128, 192, 256 bits</strong>) with dedicated hardware key expansion.</p>
+                    </div>
+                </div>
+                <div class="takeaway-item">
+                    <div class="takeaway-number">4</div>
+                    <div class="takeaway-content">
+                        <h3>Deterministic Performance</h3>
+                        <p>Zero variance across benchmark runs demonstrates <strong>consistent, predictable timing</strong>—critical for real-time and security-sensitive applications.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>AES Accelerator × PicoRV32</h3>
+                    <p>Computer Architecture End Semester Project</p>
+                    <p>NUTS University</p>
+                    <p style="margin-top: 16px;">
+                        <a href="https://github.com/abdullatufail/picorv32" target="_blank" rel="noopener noreferrer" style="color: var(--accent-primary); text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;">
+                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                            </svg>
+                            View on GitHub
+                        </a>
+                    </p>
+                </div>
+                <div class="footer-credits">
+                    <h4>Team</h4>
+                    <p>M. Zain Ikhlaq - 467999</p>
+                    <p>M. Abdullah Tufail - 476425</p>
+                    <p>M. Muqtasid - 455646</p>
+                </div>
+                <div class="footer-tech">
+                    <h4>Technologies</h4>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Verilog</span>
+                        <span class="tech-tag">RISC-V</span>
+                        <span class="tech-tag">AXI4-Lite</span>
+                        <span class="tech-tag">AES</span>
+                        <span class="tech-tag">PicoRV32</span>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>Built with hardware acceleration in mind 🚀</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
